@@ -1,0 +1,7 @@
+# Never commit ROMs (copyright). Keep your own locally.
+*.nds
+*.nds.bak
+*.sav
+
+# macOS
+.DS_Store
