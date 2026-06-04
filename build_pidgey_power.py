@@ -34,18 +34,19 @@ LEARNSET = [
     (366, 17), (542, 21), (257, 25), (304, 29), (97, 33), (143, 41),
 ]
 
-# ---------------- Quick Search (reskinned Moody) ----------------
-# Moody (ability 141) is renamed to "Quick Search" with TCG flavor text, as a
-# nod to Pidgeot's Poke-Power in EX FireRed & LeafGreen. The Pidgey line gets
-# it in ability slot 2; No Guard stays in slot 1. Effect is Moody's: at the
-# end of each turn, one stat is sharply raised and another is lowered.
-MOODY = 141
+# ---------------- Quick Search (reskinned Speed Boost) ----------------
+# Speed Boost (ability 3) is renamed to "Quick Search" with TCG flavor text,
+# as a nod to Pidgeot's Poke-Power in EX FireRed & LeafGreen. The Pidgey line
+# gets it in ability slot 2; No Guard stays in slot 1. Effect is Speed
+# Boost's: +1 Speed at the end of every turn. (It was Moody for one evening,
+# but Moody kept finding Attack boosts for a special attacker.)
+QS_EFFECT = 3
 ABIL2 = 0x19                   # ability slot 2 offset inside a personal record
 ABILITY_NAMES_FILE = 374       # a/0/0/2 text NARC, entry index == ability id
 ABILITY_NAMES_UPPER_FILE = 487 # all-caps duplicate of the ability names
 ABILITY_DESC_FILE = 375        # ability descriptions
 QS_NAME = "Quick Search"
-QS_DESC = "Searches up something\nbroken every turn."
+QS_DESC = "Searches out an extra\nEnergy every turn."
 
 # ---------------- Trainer Spencer ----------------
 SPENCER_TRAINER = 745          # Youngster Masahiro, Virbank Complex
@@ -171,7 +172,7 @@ def main():
         rec = bytearray(personal.files[species])
         rec[0:6] = bytes(stats)
         rec[ABIL1] = no_guard
-        rec[ABIL2] = MOODY      # Quick Search in slot 2
+        rec[ABIL2] = QS_EFFECT  # Quick Search in slot 2
         personal.files[species] = bytes(rec)
 
     wotbl = b"".join(struct.pack("<HH", m, l) for m, l in LEARNSET) + b"\xff\xff\xff\xff"
@@ -191,9 +192,9 @@ def main():
     msg = ndspy.narc.NARC(rom.getFileByName("a/0/0/2"))
     edits = [
         (TRAINER_NAMES_FILE, SPENCER_TRAINER, SPENCER_NAME, "Masahiro"),
-        (ABILITY_NAMES_FILE, MOODY, QS_NAME, "Moody"),
-        (ABILITY_NAMES_UPPER_FILE, MOODY, QS_NAME.upper(), "MOODY"),
-        (ABILITY_DESC_FILE, MOODY, QS_DESC, "Raises one stat and\nlowers another."),
+        (ABILITY_NAMES_FILE, QS_EFFECT, QS_NAME, "Speed Boost"),
+        (ABILITY_NAMES_UPPER_FILE, QS_EFFECT, QS_NAME.upper(), "SPEED BOOST"),
+        (ABILITY_DESC_FILE, QS_EFFECT, QS_DESC, "Its Speed stat is\ngradually boosted."),
     ]
     for fileno, index, new, expect in edits:
         newfile, oldname = rename_text_entry(msg.files[fileno], index, new,
