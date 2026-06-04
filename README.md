@@ -18,6 +18,12 @@ This is an add-on, just like Redux's own Classic / EV-less patches. You apply it
 
 Catch a Pidgey on **Route 19** (or Route 1 in the postgame) to use it.
 
+## Quick Search
+
+Moody has been reskinned as **Quick Search**, after Pidgeot's Poke-Power in EX FireRed & LeafGreen. New name, new description ("Searches up something broken every turn."), same banned-tier effect: at the end of each turn it sharply raises one random stat and lowers another.
+
+The Pidgey line now carries it in ability slot 2, with No Guard still in slot 1, so a wild Pidgey can roll either. Every other Moody Pokémon in the game shows the new name too, since it is the same ability under the hood.
+
 ## Trainer Spencer
 
 Youngster Masahiro at the **Virbank Complex** is now **Youngster Spencer**, running the three Unova starters:

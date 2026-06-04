@@ -34,6 +34,19 @@ LEARNSET = [
     (366, 17), (542, 21), (257, 25), (304, 29), (97, 33), (143, 41),
 ]
 
+# ---------------- Quick Search (reskinned Moody) ----------------
+# Moody (ability 141) is renamed to "Quick Search" with TCG flavor text, as a
+# nod to Pidgeot's Poke-Power in EX FireRed & LeafGreen. The Pidgey line gets
+# it in ability slot 2; No Guard stays in slot 1. Effect is Moody's: at the
+# end of each turn, one stat is sharply raised and another is lowered.
+MOODY = 141
+ABIL2 = 0x19                   # ability slot 2 offset inside a personal record
+ABILITY_NAMES_FILE = 374       # a/0/0/2 text NARC, entry index == ability id
+ABILITY_NAMES_UPPER_FILE = 487 # all-caps duplicate of the ability names
+ABILITY_DESC_FILE = 375        # ability descriptions
+QS_NAME = "Quick Search"
+QS_DESC = "Searches up something\nbroken every turn."
+
 # ---------------- Trainer Spencer ----------------
 SPENCER_TRAINER = 745          # Youngster Masahiro, Virbank Complex
 SPENCER_NAME = "Spencer"
@@ -121,11 +134,11 @@ def rename_text_entry(data, index, new_text, expect_old=None):
     body = dec[:-1]
     if body and body[0] == 0xF100:
         body = _unpack9(body[1:])
-    oldname = "".join(map(chr, body))
+    oldname = "".join("\n" if c == 0xFFFE else chr(c) for c in body)
     if expect_old is not None:
         assert oldname == expect_old, f"slot holds {oldname!r}, not {expect_old!r}"
 
-    new_chars = [ord(c) for c in new_text] + [0xFFFF]
+    new_chars = [0xFFFE if c == "\n" else ord(c) for c in new_text] + [0xFFFF]
     entries[index][1] = _crypt(new_chars, key0)
 
     table = b""
@@ -158,6 +171,7 @@ def main():
         rec = bytearray(personal.files[species])
         rec[0:6] = bytes(stats)
         rec[ABIL1] = no_guard
+        rec[ABIL2] = MOODY      # Quick Search in slot 2
         personal.files[species] = bytes(rec)
 
     wotbl = b"".join(struct.pack("<HH", m, l) for m, l in LEARNSET) + b"\xff\xff\xff\xff"
@@ -173,13 +187,19 @@ def main():
     rom.setFileByName("a/0/9/2", trpoke.save())
     # Trainer record (a/0/9/1) is untouched: format 1, Youngster, 3 pokemon.
 
-    # --- Spencer: name ---
+    # --- text edits: Spencer's name + the Quick Search reskin ---
     msg = ndspy.narc.NARC(rom.getFileByName("a/0/0/2"))
-    newfile, oldname = rename_text_entry(msg.files[TRAINER_NAMES_FILE],
-                                         SPENCER_TRAINER, SPENCER_NAME,
-                                         expect_old="Masahiro")
-    print(f"trainer {SPENCER_TRAINER}: {oldname!r} -> {SPENCER_NAME!r}")
-    msg.files[TRAINER_NAMES_FILE] = newfile
+    edits = [
+        (TRAINER_NAMES_FILE, SPENCER_TRAINER, SPENCER_NAME, "Masahiro"),
+        (ABILITY_NAMES_FILE, MOODY, QS_NAME, "Moody"),
+        (ABILITY_NAMES_UPPER_FILE, MOODY, QS_NAME.upper(), "MOODY"),
+        (ABILITY_DESC_FILE, MOODY, QS_DESC, "Raises one stat and\nlowers another."),
+    ]
+    for fileno, index, new, expect in edits:
+        newfile, oldname = rename_text_entry(msg.files[fileno], index, new,
+                                             expect_old=expect)
+        print(f"a/0/0/2 file {fileno} entry {index}: {oldname!r} -> {new!r}")
+        msg.files[fileno] = newfile
     rom.setFileByName("a/0/0/2", msg.save())
 
     rom.saveToFile(out)
