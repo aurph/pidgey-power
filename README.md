@@ -18,6 +18,16 @@ This is an add-on, just like Redux's own Classic / EV-less patches. You apply it
 
 Catch a Pidgey on **Route 19** (or Route 1 in the postgame) to use it.
 
+## Trainer Spencer
+
+Youngster Masahiro at the **Virbank Complex** is now **Youngster Spencer**, running the three Unova starters:
+
+- Snivy lv. 15 (Overgrow): Vine Whip, Wrap, Growth, Leaf Tornado
+- Tepig lv. 15 (Blaze): Ember, Tackle, Defense Curl, Flame Charge
+- Oshawott lv. 16 (Torrent): Water Gun, Razor Shell, Focus Energy, Tackle
+
+Same spot as the original trainer, one level off the area curve, minus 1 on Easy and plus 1 on Challenge like the rest of the Complex.
+
 ## Requirements
 
 A clean **Pokémon Blaze Black 2 Redux v1.4.1 (Complete)** `.nds`, which you build yourself from a clean Pokémon Black 2 (USA) ROM plus Drayano's Redux Complete patch (Drayano releases it via [@Drayano60](https://twitter.com/Drayano60)). This repo does not host any ROMs.
@@ -41,7 +51,7 @@ Do the whole thing on a phone, or just copy a desktop-patched `.nds` onto your d
 
 ## Build it yourself
 
-`build_pidgey_power.py` is the exact script that produces this mod. It edits the Pokémon personal data (`a/0/1/6`) and level-up learnsets (`a/0/1/8`) directly with [ndspy](https://pypi.org/project/ndspy/).
+`build_pidgey_power.py` is the exact script that produces this mod. It edits the Pokémon personal data (`a/0/1/6`), level-up learnsets (`a/0/1/8`), trainer Pokémon (`a/0/9/2`), and the trainer name text (`a/0/0/2`) directly with [ndspy](https://pypi.org/project/ndspy/).
 
 ```bash
 pip install ndspy
